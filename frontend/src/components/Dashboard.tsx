@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
   });
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('http://localhost:5001');
 
     socket.on('system_stats', (newStats: SystemStats) => {
       setStats(newStats);

@@ -56,7 +56,7 @@ const Settings: React.FC = () => {
 
   const fetchConfig = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/config');
+      const response = await axios.get('http://localhost:5001/api/config');
       setConfig(response.data);
     } catch (error) {
       console.error('Error fetching configuration:', error);
@@ -70,7 +70,7 @@ const Settings: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios.post('http://localhost:5000/api/config', config);
+      await axios.post('http://localhost:5001/api/config', config);
       setSnackbar({
         open: true,
         message: 'Settings saved successfully',

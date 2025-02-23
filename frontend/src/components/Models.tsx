@@ -46,7 +46,7 @@ const Models: React.FC = () => {
 
   const fetchModels = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/models');
+      const response = await axios.get('http://localhost:5001/api/models');
       setModels(response.data);
     } catch (error) {
       console.error('Error fetching models:', error);
@@ -70,7 +70,7 @@ const Models: React.FC = () => {
 
   const handleConfigSave = async () => {
     try {
-      await axios.post('http://localhost:5000/api/config', {
+      await axios.post('http://localhost:5001/api/config', {
         model: selectedModel?.id,
         ...configForm
       });
