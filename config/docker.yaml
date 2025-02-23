@@ -1,0 +1,74 @@
+# Component version information
+version: "1.0.0"
+required_version: "1.0.0"
+component_name: "JadeDocker"
+
+# Deployment settings
+deployment:
+  status_file: "/opt/control-panel/.docker_setup"
+  backup_dir: "/opt/control-panel/backups/docker"
+  log_dir: "/opt/control-panel/logs"
+
+# Docker configuration
+docker:
+  # Network configuration
+  network:
+    name: "jade-network"
+    driver: "bridge"
+    subnet: "172.20.0.0/16"
+
+  # Required packages
+  packages:
+    - name: "docker-ce"
+      version: "latest"
+    - name: "docker-ce-cli"
+      version: "latest"
+    - name: "containerd.io"
+      version: "latest"
+
+  # Repository configuration
+  repository:
+    key_url: "https://download.docker.com/linux/{os}/gpg"
+    component: "stable"
+    # URL and architecture will be auto-detected by the script
+
+  # System requirements
+  requirements:
+    memory: 2048  # MB
+    disk_space: 10240  # MB
+    kernel_modules:
+      - "overlay"
+      - "br_netfilter"
+
+# Jade services configuration
+services:
+  web_admin:
+    name: "JadeWebAdmin"
+    image: "jade-web-admin:latest"
+    port: 5000
+    volumes:
+      - "/opt/control-panel/data:/data"
+    environment:
+      - "NODE_ENV=production"
+
+  video_capture:
+    name: "JadeVideoCapture"
+    image: "jade-video-capture:latest"
+    port: 8081
+    devices:
+      - "/dev/video0:/dev/video0"
+
+  portainer:
+    name: "JadePortainer"
+    image: "jade-portainer:latest"
+    port: 9000
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer_data:/data"
+
+  bluetooth:
+    name: "JadeBluetooth"
+    image: "jade-bluetooth:latest"
+    privileged: true
+    volumes:
+      - "/var/run/dbus:/var/run/dbus"

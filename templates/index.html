@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jade AI Control Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+        
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: #212529;
+            padding-top: 1rem;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            padding: 0.5rem 1rem;
+        }
+        
+        .sidebar-menu a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-menu a:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu a.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.5rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: rgba(0,0,0,0.02);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .device-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            background-color: white;
+        }
+        
+        .device-info {
+            flex-grow: 1;
+        }
+        
+        .device-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .device-mac {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            background-color: black;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .video-feed {
+            width: 100%;
+            height: auto;
+        }
+        
+        .network-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-active {
+            background-color: #28a745;
+        }
+        
+        .status-inactive {
+            background-color: #dc3545;
+        }
+        
+        .system-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-title {
+            color: #6c757d;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .toggle-sidebar {
+                display: block !important;
+            }
+        }
+        
+        .toggle-sidebar {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background-color: #212529;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-sidebar" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h5 class="mb-0">Jade AI</h5>
+            <small class="text-muted">Control Panel</small>
+        </div>
+        <ul class="sidebar-menu mt-3">
+            <li>
+                <a href="#" class="active" onclick="showSection('hid-emulator')">
+                    <i class="bi bi-keyboard"></i>
+                    HID Emulator
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('bluetooth')">
+                    <i class="bi bi-bluetooth"></i>
+                    Bluetooth Host
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('network')">
+                    <i class="bi bi-wifi"></i>
+                    Network Settings
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('video')">
+                    <i class="bi bi-camera-video"></i>
+                    Video Capture
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('system')">
+                    <i class="bi bi-gear"></i>
+                    System
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <main class="main-content">
+        <!-- Content sections will be loaded here -->
+        <div id="hid-emulator-section" class="content-section"></div>
+        <div id="bluetooth-section" class="content-section" style="display: none;"></div>
+        <div id="network-section" class="content-section" style="display: none;"></div>
+        <div id="video-section" class="content-section" style="display: none;"></div>
+        <div id="system-section" class="content-section" style="display: none;"></div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        }
+        
+        // Show selected section
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(`${section}-section`).style.display = 'block';
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-menu a').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.sidebar-menu a[onclick="showSection('${section}')"]`).classList.add('active');
+            
+            // Load section content if needed
+            loadSectionContent(section);
+            
+            // Hide sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('show');
+            }
+        }
+        
+        // Load section content
+        function loadSectionContent(section) {
+            fetch(`/templates/${section}.html`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById(`${section}-section`).innerHTML = html;
+                    initializeSection(section);
+                })
+                .catch(error => console.error('Error loading section:', error));
+        }
+        
+        // Initialize section functionality
+        function initializeSection(section) {
+            switch(section) {
+                case 'hid-emulator':
+                    initHidEmulator();
+                    break;
+                case 'bluetooth':
+                    initBluetooth();
+                    break;
+                case 'network':
+                    initNetwork();
+                    break;
+                case 'video':
+                    initVideo();
+                    break;
+                case 'system':
+                    initSystem();
+                    break;
+            }
+        }
+        
+        // Load initial section
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('hid-emulator');
+        });
+    </script>
+</body>
+</html>

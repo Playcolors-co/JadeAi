@@ -1,0 +1,102 @@
+{
+  "hid": {
+    "info": {
+      "setup_start": "Starting Jade HID setup",
+      "setup_complete": "HID setup completed successfully",
+      "prerequisites": {
+        "checking": "Checking HID prerequisites",
+        "passed": "All HID prerequisites passed"
+      },
+      "packages": {
+        "installing": "Installing HID packages",
+        "installing_specific": "Installing package: {0}",
+        "complete": "HID package installation completed"
+      },
+      "devices": {
+        "scanning": "Scanning for HID devices",
+        "found": "Found HID device: {0} ({1})",
+        "configuring": "Configuring device: {0}",
+        "complete": "Device configuration completed"
+      },
+      "udev": {
+        "configuring": "Configuring udev rules",
+        "reloading": "Reloading udev rules",
+        "complete": "udev configuration completed"
+      },
+      "docker": {
+        "setup": "Setting up HID container",
+        "starting": "Starting HID container",
+        "complete": "HID container setup completed"
+      },
+      "testing": "Running HID tests",
+      "tests_passed": "All HID tests passed",
+      "deployment": {
+        "status": "Current HID deployment status: {0}",
+        "version": "HID component version: {0}",
+        "backup": "Creating HID configuration backup",
+        "rollback": "Rolling back HID configuration"
+      }
+    },
+    "warn": {
+      "device": {
+        "not_found": "No {0} devices found - will retry after package installation",
+        "permissions": "Device permissions suboptimal: {0}",
+        "access": "Device access might be restricted: {0}"
+      },
+      "udev": {
+        "restart": "udev service restart required",
+        "rules_modified": "udev rules have been modified - reload needed"
+      },
+      "backup": {
+        "partial": "Some HID configuration files could not be backed up",
+        "skipped": "Backup skipped - no existing HID configuration found"
+      },
+      "test": {
+        "skipped": "HID tests skipped - test script not found",
+        "timeout": "HID test execution exceeded timeout of {0} seconds"
+      }
+    },
+    "error": {
+      "prerequisites": {
+        "system": "System component must be deployed first",
+        "version": "System version {0} is required (current: {1})"
+      },
+      "hardware": {
+        "keyboard": "No keyboard device detected",
+        "mouse": "No mouse device detected",
+        "permissions": "Cannot access HID device (permissions)",
+        "blocked": "Device access blocked by udev rules",
+        "failure": "Failed to initialize HID device"
+      },
+      "package": {
+        "install": "Failed to install HID package: {0}",
+        "configure": "Failed to configure package: {0}",
+        "dependency": "Missing required dependency: {0}"
+      },
+      "udev": {
+        "rules": "Failed to create udev rules",
+        "reload": "Failed to reload udev rules",
+        "trigger": "Failed to trigger udev events",
+        "permission": "Failed to set device permissions"
+      },
+      "docker": {
+        "build": "Failed to build HID Docker image",
+        "start": "Failed to start HID container",
+        "privileged": "Container requires privileged mode",
+        "device": "HID devices not accessible in container"
+      },
+      "deployment": {
+        "status": "Failed to update HID deployment status",
+        "rollback": "HID rollback failed - previous version not found",
+        "config_restore": "Failed to restore HID configuration"
+      },
+      "test": {
+        "failed": "HID tests failed: {0}",
+        "keyboard": "Keyboard test failed - no input detected",
+        "mouse": "Mouse test failed - no movement detected",
+        "joystick": "Joystick test failed: {0}",
+        "latency": "Input latency test failed - {0}ms (max: {1}ms)"
+      }
+    }
+  }
+}

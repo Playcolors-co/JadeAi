@@ -1,0 +1,215 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Bluetooth Host/Client</h5>
+                    <div>
+                        <button class="btn btn-secondary me-2" onclick="refreshDevices()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button id="scanButton" class="btn btn-primary" onclick="startScan()">
+                            <i class="bi bi-search"></i> Scan for Devices
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Connected HID Devices</h6>
+                        <p class="text-muted small">Manage your connected keyboards, mice, and other HID devices</p>
+                        <ul id="paired-devices" class="device-list">
+                            <!-- Paired devices will be populated here -->
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h6 class="d-flex align-items-center">
+                            Available HID Devices
+                            <span id="scanning-indicator" class="badge bg-primary ms-2" style="display: none;">
+                                Scanning...
+                            </span>
+                        </h6>
+                        <p class="text-muted small">Discover and connect to new HID devices</p>
+                        <ul id="available-devices" class="device-list">
+                            <!-- Available devices will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let scanInterval;
+
+function initBluetooth() {
+    refreshDevices();
+    checkScanStatus();
+}
+
+function refreshDevices() {
+    // Get paired devices
+    fetch('/api/bluetooth/devices/paired')
+        .then(response => response.json())
+        .then(devices => {
+            const deviceList = document.getElementById('paired-devices');
+            deviceList.innerHTML = '';
+            
+            devices.forEach(device => {
+                const li = document.createElement('li');
+                li.className = 'device-item';
+                li.innerHTML = `
+                    <div class="device-info">
+                        <div class="device-name">${device.name}</div>
+                        <div class="device-mac">${device.mac}</div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="unpairDevice('${device.mac}')">
+                        <i class="bi bi-trash"></i> Unpair
+                    </button>
+                `;
+                deviceList.appendChild(li);
+            });
+            
+            if (devices.length === 0) {
+                deviceList.innerHTML = '<div class="text-muted">No paired devices</div>';
+            }
+        })
+        .catch(error => showError('Failed to get paired devices'));
+        
+    // Get available devices
+    fetch('/api/bluetooth/devices/available')
+        .then(response => response.json())
+        .then(devices => {
+            const deviceList = document.getElementById('available-devices');
+            deviceList.innerHTML = '';
+            
+            devices.forEach(device => {
+                if (!isPaired(device.mac)) {
+                    const li = document.createElement('li');
+                    li.className = 'device-item';
+                    li.innerHTML = `
+                        <div class="device-info">
+                            <div class="device-name">${device.name}</div>
+                            <div class="device-mac">${device.mac}</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="pairDevice('${device.mac}')">
+                            <i class="bi bi-bluetooth"></i> Pair
+                        </button>
+                    `;
+                    deviceList.appendChild(li);
+                }
+            });
+            
+            if (deviceList.children.length === 0) {
+                deviceList.innerHTML = '<div class="text-muted">No available devices</div>';
+            }
+        })
+        .catch(error => showError('Failed to get available devices'));
+}
+
+function startScan() {
+    const scanButton = document.getElementById('scanButton');
+    const scanningIndicator = document.getElementById('scanning-indicator');
+    
+    scanButton.disabled = true;
+    scanningIndicator.style.display = 'inline-block';
+    
+    fetch('/api/bluetooth/scan', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Poll for new devices during scan
+        scanInterval = setInterval(refreshDevices, 2000);
+        
+        // Reset after 30 seconds
+        setTimeout(() => {
+            stopScan();
+        }, 30000);
+    })
+    .catch(error => {
+        showError('Failed to start scan');
+        stopScan();
+    });
+}
+
+function stopScan() {
+    const scanButton = document.getElementById('scanButton');
+    const scanningIndicator = document.getElementById('scanning-indicator');
+    
+    clearInterval(scanInterval);
+    scanButton.disabled = false;
+    scanningIndicator.style.display = 'none';
+}
+
+function checkScanStatus() {
+    fetch('/api/bluetooth/scan/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.scanning) {
+                const scanButton = document.getElementById('scanButton');
+                const scanningIndicator = document.getElementById('scanning-indicator');
+                
+                scanButton.disabled = true;
+                scanningIndicator.style.display = 'inline-block';
+                
+                scanInterval = setInterval(refreshDevices, 2000);
+            }
+        });
+}
+
+function pairDevice(mac) {
+    fetch('/api/bluetooth/pair', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ mac })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccess('Device paired successfully');
+            refreshDevices();
+        } else {
+            showError(data.error || 'Failed to pair device');
+        }
+    })
+    .catch(error => showError('Failed to pair device'));
+}
+
+function unpairDevice(mac) {
+    if (confirm('Are you sure you want to unpair this device?')) {
+        fetch('/api/bluetooth/unpair', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mac })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess('Device unpaired successfully');
+                refreshDevices();
+            } else {
+                showError(data.error || 'Failed to unpair device');
+            }
+        })
+        .catch(error => showError('Failed to unpair device'));
+    }
+}
+
+function isPaired(mac) {
+    const pairedDevices = document.getElementById('paired-devices');
+    return Array.from(pairedDevices.children).some(
+        li => li.querySelector('.device-mac')?.textContent === mac
+    );
+}
+
+// Clean up when leaving the section
+function cleanupBluetooth() {
+    clearInterval(scanInterval);
+}
+</script>

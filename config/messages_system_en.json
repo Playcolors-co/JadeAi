@@ -1,0 +1,184 @@
+{
+  "system": {
+    "info": {
+      "setup_start": "Starting Jade System setup...",
+      "setup_complete": "System setup completed successfully",
+      "prerequisites": {
+        "checking": "Checking system prerequisites...",
+        "passed": "All prerequisites checks passed"
+      },
+      "packages": {
+        "installing": "Installing required system packages...",
+        "installing_specific": "Installing package: {0}...",
+        "complete": "Package installation completed"
+      },
+      "directories": {
+        "creating": "Creating required system directories...",
+        "complete": "Directory creation completed"
+      },
+      "config": {
+        "creating": "Creating system configuration...",
+        "complete": "System configuration created"
+      },
+      "docker": {
+        "setup": "Setting up Docker environment...",
+        "network": "Creating Jade network...",
+        "complete": "Docker setup completed"
+      },
+      "testing": "Running system tests...",
+      "tests_passed": "All system tests passed",
+      "deployment": {
+        "status": "Current deployment status: {0}",
+        "version": "Component version: {0}",
+        "backup": "Creating backup before deployment...",
+        "rollback": "Performing rollback to previous version..."
+      }
+    },
+    "warn": {
+      "disk_space": "[WARN] Available disk space ({0}MB) is close to minimum requirement",
+      "memory": "[WARN] Available memory ({0}MB) is close to minimum requirement",
+      "backup": {
+        "partial": "[WARN] Some files could not be backed up",
+        "skipped": "[WARN] Backup skipped - no existing installation found"
+      },
+      "test": {
+        "skipped": "[WARN] Tests skipped - test script not found",
+        "timeout": "[WARN] Test execution exceeded timeout of {0} seconds"
+      },
+      "retry_attempt": "[WARN] Retrying operation ({0} of {1})"
+    },
+    "error": {
+      "root_required": "[ERROR] This script must be run as root (current UID: {0})",
+      "no_internet": "[ERROR] No internet connectivity - required for package installation",
+      "disk_space": "[ERROR] Insufficient disk space. Required: {0}MB, Available: {1}MB",
+      "memory": "[ERROR] Insufficient memory. Required: {0}MB, Available: {1}MB",
+      "package": {
+        "update_failed": "[ERROR] Failed to update package lists",
+        "install": "[ERROR] Failed to install package: {0}"
+      },
+      "directory": {
+        "create": "[ERROR] Failed to create directory: {0}",
+        "permission": "[ERROR] Failed to set permissions on directory: {0}"
+      },
+      "config": {
+        "create": "[ERROR] Failed to create system configuration",
+        "invalid": "[ERROR] Invalid configuration format"
+      },
+      "docker": {
+        "not_installed": "[ERROR] Docker is not installed",
+        "not_running": "[ERROR] Docker service is not running",
+        "network": "[ERROR] Failed to create Docker network",
+        "compose": "[ERROR] Failed to start Docker compose services"
+      },
+      "deployment": {
+        "version": "[ERROR] Version mismatch. Required: {0}, Current: {1}",
+        "status": "[ERROR] Failed to update deployment status",
+        "rollback": "[ERROR] Rollback failed - previous version not found"
+      },
+      "test": {
+        "failed": "[ERROR] System tests failed",
+        "script": "[ERROR] Test script execution failed: {0}",
+        "version_mismatch": "[ERROR] Common script version mismatch. Required: {0}, Current: {1}",
+        "config_load_failed": "[ERROR] Failed to load system configuration",
+        "packages": {
+          "not_installed": "[ERROR] Package not installed: {0}",
+          "version_mismatch": "[ERROR] Package {0} version mismatch. Required: {1}, Current: {2}"
+        },
+        "directories": {
+          "not_found": "[ERROR] Directory not found: {0}",
+          "wrong_permissions": "[ERROR] Directory {0} has incorrect permissions: {2} (expected: {1})",
+          "wrong_owner": "[ERROR] Directory {0} has incorrect owner: {2} (expected: {1})",
+          "wrong_group": "[ERROR] Directory {0} has incorrect group: {2} (expected: {1})"
+        },
+        "docker": {
+          "not_running": "[ERROR] Docker service is not running",
+          "version_mismatch": "[ERROR] Docker version mismatch. Required: {0}, Current: {1}",
+          "network_missing": "[ERROR] Docker network not found: {0}",
+          "wrong_subnet": "[ERROR] Docker network {0} has incorrect subnet (expected: {1})",
+          "wrong_driver": "[ERROR] Docker network {0} has incorrect driver (expected: {1})"
+        },
+        "config": {
+          "status_missing": "[ERROR] Status file not found: {0}",
+          "wrong_permissions": "[ERROR] Status file {0} has incorrect permissions: {2} (expected: {1})",
+          "wrong_status": "[ERROR] Incorrect deployment status: {0}"
+        },
+        "health": {
+          "failed": "[ERROR] Health check failed for endpoint: {0}"
+        }
+      }
+    },
+    "progress": {
+      "prerequisites": "Checking system prerequisites",
+      "backup": "Creating system backup",
+      "packages": "Installing required packages",
+      "directories": "Creating system directories",
+      "docker": "Setting up Docker environment",
+      "testing": "Running system tests",
+      "completion": "Completing system setup"
+    },
+    "test": {
+      "start": "Starting system deployment tests...",
+      "success": "All system tests passed successfully",
+      "packages": {
+        "checking": "Testing required packages...",
+        "checking_specific": "Testing package: {0}...",
+        "success": "All package tests passed"
+      },
+      "directories": {
+        "checking": "Testing required directories...",
+        "checking_specific": "Testing directory: {0}...",
+        "success": "All directory tests passed"
+      },
+      "docker": {
+        "checking": "Testing Docker setup...",
+        "success": "All Docker tests passed"
+      },
+      "config": {
+        "checking": "Testing system configuration...",
+        "success": "All configuration tests passed"
+      },
+      "health": {
+        "checking": "Testing system health...",
+        "retry": "Retrying health check ({0} of {1})...",
+        "success": "Health check passed"
+      },
+      "rollback": {
+        "start": "Starting system rollback tests...",
+        "success": "All rollback tests passed successfully",
+        "failed": "Rollback tests failed",
+        "packages": {
+          "checking": "Testing package removal...",
+          "checking_specific": "Testing removal of package: {0}...",
+          "still_installed": "[ERROR] Package still installed: {0}",
+          "success": "All packages successfully removed"
+        },
+        "directories": {
+          "checking": "Testing directory cleanup...",
+          "checking_specific": "Testing cleanup of directory: {0}...",
+          "not_empty": "[ERROR] Directory not empty: {0}",
+          "success": "All directories successfully cleaned"
+        },
+        "docker": {
+          "checking": "Testing Docker cleanup...",
+          "container_exists": "[ERROR] Docker container still exists: {0}",
+          "image_exists": "[ERROR] Docker image still exists: {0}",
+          "network_exists": "[ERROR] Docker network still exists: {0}",
+          "success": "Docker environment successfully cleaned"
+        },
+        "config": {
+          "checking": "Testing configuration cleanup...",
+          "status_exists": "[ERROR] Status file still exists: {0}",
+          "wrong_status": "[ERROR] System still marked as deployed",
+          "success": "Configuration successfully cleaned"
+        },
+        "backup": {
+          "checking": "Testing backup creation...",
+          "dir_missing": "[ERROR] Backup directory not found: {0}",
+          "empty": "[ERROR] No backups found in: {0}",
+          "missing_file": "[ERROR] Required file {0} missing from backup: {1}",
+          "success": "Backup successfully created and verified"
+        }
+      }
+    }
+  }
+}

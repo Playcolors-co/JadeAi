@@ -1,0 +1,326 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Video Feed -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Video Feed</h5>
+                    <div>
+                        <select id="video-device" class="form-select form-select-sm d-inline-block me-2" style="width: auto;">
+                            <!-- Video devices will be populated here -->
+                        </select>
+                        <button id="startButton" class="btn btn-primary btn-sm" onclick="toggleStream()">
+                            <i class="bi bi-play-fill"></i> Start Stream
+                        </button>
+                        <button class="btn btn-secondary btn-sm ms-2" onclick="takeSnapshot()">
+                            <i class="bi bi-camera"></i> Snapshot
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="video-container">
+                        <img id="video-feed" class="video-feed" style="display: none;">
+                        <div id="video-placeholder" class="d-flex align-items-center justify-content-center" style="height: 400px; background-color: #000;">
+                            <div class="text-white text-center">
+                                <i class="bi bi-camera-video-off" style="font-size: 3rem;"></i>
+                                <p class="mt-2">Video feed not active</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Controls -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Video Controls</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Resolution</label>
+                            <select id="resolution" class="form-select" onchange="updateResolution()">
+                                <option value="1920x1080">1920x1080 (Full HD)</option>
+                                <option value="1280x720">1280x720 (HD)</option>
+                                <option value="854x480">854x480 (480p)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Frame Rate</label>
+                            <select id="framerate" class="form-select" onchange="updateFrameRate()">
+                                <option value="30">30 FPS</option>
+                                <option value="25">25 FPS</option>
+                                <option value="15">15 FPS</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Quality</label>
+                            <select id="quality" class="form-select" onchange="updateQuality()">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Snapshots -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Snapshots</h5>
+                    <button class="btn btn-secondary btn-sm" onclick="refreshSnapshots()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="snapshots" class="row g-3">
+                        <!-- Snapshots will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let isStreaming = false;
+let streamInterval;
+
+function initVideo() {
+    refreshDevices();
+    refreshSnapshots();
+}
+
+function refreshDevices() {
+    fetch('/api/video/devices')
+        .then(response => response.json())
+        .then(devices => {
+            const select = document.getElementById('video-device');
+            select.innerHTML = '';
+            
+            devices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.id;
+                option.textContent = device.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => showError('Failed to get video devices'));
+}
+
+function toggleStream() {
+    const button = document.getElementById('startButton');
+    const feed = document.getElementById('video-feed');
+    const placeholder = document.getElementById('video-placeholder');
+    
+    if (!isStreaming) {
+        // Start stream
+        const deviceId = document.getElementById('video-device').value;
+        
+        fetch('/api/video/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ device_id: deviceId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                isStreaming = true;
+                button.innerHTML = '<i class="bi bi-stop-fill"></i> Stop Stream';
+                feed.style.display = 'block';
+                placeholder.style.display = 'none';
+                
+                // Start updating the video feed
+                feed.src = '/api/video/stream';
+                streamInterval = setInterval(updateStreamStatus, 5000);
+            } else {
+                showError(data.error || 'Failed to start stream');
+            }
+        })
+        .catch(error => showError('Failed to start stream'));
+    } else {
+        // Stop stream
+        fetch('/api/video/stop', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                isStreaming = false;
+                button.innerHTML = '<i class="bi bi-play-fill"></i> Start Stream';
+                feed.style.display = 'none';
+                placeholder.style.display = 'flex';
+                clearInterval(streamInterval);
+            })
+            .catch(error => showError('Failed to stop stream'));
+    }
+}
+
+function updateStreamStatus() {
+    fetch('/api/video/status')
+        .then(response => response.json())
+        .then(status => {
+            if (!status.streaming) {
+                stopStream();
+            }
+        })
+        .catch(error => console.error('Failed to check stream status'));
+}
+
+function stopStream() {
+    isStreaming = false;
+    const button = document.getElementById('startButton');
+    const feed = document.getElementById('video-feed');
+    const placeholder = document.getElementById('video-placeholder');
+    
+    button.innerHTML = '<i class="bi bi-play-fill"></i> Start Stream';
+    feed.style.display = 'none';
+    placeholder.style.display = 'flex';
+    clearInterval(streamInterval);
+}
+
+function takeSnapshot() {
+    if (!isStreaming) {
+        showError('Stream must be active to take a snapshot');
+        return;
+    }
+    
+    fetch('/api/video/snapshot')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess('Snapshot taken');
+                refreshSnapshots();
+            } else {
+                showError(data.error || 'Failed to take snapshot');
+            }
+        })
+        .catch(error => showError('Failed to take snapshot'));
+}
+
+function refreshSnapshots() {
+    // Get list of recent snapshots
+    fetch('/api/video/snapshots')
+        .then(response => response.json())
+        .then(snapshots => {
+            const container = document.getElementById('snapshots');
+            container.innerHTML = '';
+            
+            snapshots.forEach(snapshot => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-lg-3';
+                col.innerHTML = `
+                    <div class="card">
+                        <img src="/data/snapshots/${snapshot.filename}" class="card-img-top" alt="Snapshot">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">${snapshot.timestamp}</p>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/data/snapshots/${snapshot.filename}" class="btn btn-primary" download>
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <button class="btn btn-danger" onclick="deleteSnapshot('${snapshot.filename}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+            
+            if (snapshots.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="text-muted">No snapshots available</div></div>';
+            }
+        })
+        .catch(error => showError('Failed to get snapshots'));
+}
+
+function deleteSnapshot(filename) {
+    if (confirm('Delete this snapshot?')) {
+        fetch('/api/video/snapshot/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filename })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess('Snapshot deleted');
+                refreshSnapshots();
+            } else {
+                showError(data.error || 'Failed to delete snapshot');
+            }
+        })
+        .catch(error => showError('Failed to delete snapshot'));
+    }
+}
+
+function updateResolution() {
+    if (isStreaming) {
+        const resolution = document.getElementById('resolution').value;
+        fetch('/api/video/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ resolution })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                showError(data.error || 'Failed to update resolution');
+            }
+        })
+        .catch(error => showError('Failed to update resolution'));
+    }
+}
+
+function updateFrameRate() {
+    if (isStreaming) {
+        const framerate = document.getElementById('framerate').value;
+        fetch('/api/video/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ framerate: parseInt(framerate) })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                showError(data.error || 'Failed to update frame rate');
+            }
+        })
+        .catch(error => showError('Failed to update frame rate'));
+    }
+}
+
+function updateQuality() {
+    if (isStreaming) {
+        const quality = document.getElementById('quality').value;
+        fetch('/api/video/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quality })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                showError(data.error || 'Failed to update quality');
+            }
+        })
+        .catch(error => showError('Failed to update quality'));
+    }
+}
+
+// Clean up when leaving the section
+function cleanupVideo() {
+    if (isStreaming) {
+        stopStream();
+    }
+}
+</script>

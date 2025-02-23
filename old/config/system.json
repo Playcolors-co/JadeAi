@@ -1,0 +1,25 @@
+{
+    "version": "1.0.0",
+    "required_python_version": "3.9.0",
+    "status_file": "/opt/control-panel/.system_setup",
+    "config_file": "/opt/control-panel/config/system.json",
+    "disk_space": {
+        "required": 1048576
+    },
+    "required_packages": [
+        "python3",
+        "python3-pip",
+        "python3-venv",
+        "build-essential",
+        "git",
+        "curl",
+        "wget",
+        "jq"
+    ],
+    "required_dirs": [
+        "/opt/control-panel",
+        "/opt/control-panel/config",
+        "/opt/control-panel/logs",
+        "/opt/control-panel/backups"
+    ]
+}

@@ -1,0 +1,7 @@
+Host raspberrypi
+    HostName 192.168.88.59
+    User theboxpi
+    ForwardAgent yes
+    ForwardX11 no
+    Port 22
+    IdentityFile ~/.ssh/id_rsa

@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  jade-web-admin:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - /dev:/dev
+      - /sys/class/bluetooth:/sys/class/bluetooth
+      - /var/run/dbus:/var/run/dbus
+      - /sys/kernel/config:/sys/kernel/config
+    privileged: true
+    network_mode: host
+    environment:
+      - DISPLAY=:0
+    devices:
+      - "/dev/video0:/dev/video0"
+      - "/dev/hidg0:/dev/hidg0"
+    restart: unless-stopped
+
+  jade-video-capture:
+    image: jrottenberg/ffmpeg:4.4-ubuntu
+    command: -f v4l2 -i /dev/video0 -c:v libx264 -preset ultrafast -tune zerolatency -f mpegts http://localhost:8081/stream
+    devices:
+      - "/dev/video0:/dev/video0"
+    depends_on:
+      - jade-web-admin
+    restart: unless-stopped
+
+  jade-portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+
+  jade-bluetooth:
+    build:
+      context: .
+      dockerfile: Dockerfile.bluetooth
+    privileged: true
+    network_mode: host
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /sys/class/bluetooth:/sys/class/bluetooth
+    restart: unless-stopped
+
+volumes:
+  portainer_data:

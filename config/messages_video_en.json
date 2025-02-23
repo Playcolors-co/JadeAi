@@ -1,0 +1,99 @@
+{
+  "video": {
+    "info": {
+      "setup_start": "Starting Jade Video setup",
+      "setup_complete": "Video setup completed successfully",
+      "prerequisites": {
+        "checking": "Checking video prerequisites",
+        "passed": "All video prerequisites passed"
+      },
+      "packages": {
+        "installing": "Installing video packages",
+        "installing_specific": "Installing package: {0}",
+        "complete": "Video package installation completed"
+      },
+      "devices": {
+        "scanning": "Scanning for video devices",
+        "found": "Found video device: {0}",
+        "configuring": "Configuring video device: {0}",
+        "complete": "Video device configuration completed"
+      },
+      "docker": {
+        "setup": "Setting up video streaming container",
+        "starting": "Starting video container",
+        "complete": "Video container setup completed"
+      },
+      "testing": "Running video tests",
+      "tests_passed": "All video tests passed",
+      "deployment": {
+        "status": "Current video deployment status: {0}",
+        "version": "Video component version: {0}",
+        "backup": "Creating video configuration backup",
+        "rollback": "Rolling back video configuration"
+      }
+    },
+    "warn": {
+      "device": {
+        "not_found": "No video devices found - will retry after package installation",
+        "format": "Preferred format {0} not supported, falling back to {1}",
+        "resolution": "Preferred resolution {0} not supported, falling back to {1}",
+        "framerate": "Preferred framerate {0} not supported, falling back to {1}"
+      },
+      "service": {
+        "restart": "Video service restart required",
+        "config_modified": "Video configuration has been modified - service restart needed"
+      },
+      "backup": {
+        "partial": "Some video configuration files could not be backed up",
+        "skipped": "Backup skipped - no existing video configuration found"
+      },
+      "test": {
+        "skipped": "Video tests skipped - test script not found",
+        "timeout": "Video test execution exceeded timeout of {0} seconds"
+      }
+    },
+    "error": {
+      "prerequisites": {
+        "system": "System component must be deployed first",
+        "version": "System version {0} is required (current: {1})"
+      },
+      "hardware": {
+        "not_found": "No video capture devices detected",
+        "unsupported": "Video device does not support required features",
+        "permissions": "Cannot access video device (permissions)",
+        "busy": "Video device is in use by another application",
+        "failure": "Failed to initialize video device"
+      },
+      "package": {
+        "install": "Failed to install video package: {0}",
+        "configure": "Failed to configure package: {0}",
+        "gstreamer": "Required GStreamer plugin not available: {0}"
+      },
+      "device": {
+        "open": "Failed to open video device: {0}",
+        "format": "No supported video format available",
+        "resolution": "No supported resolution available",
+        "framerate": "No supported framerate available",
+        "stream": "Failed to start video stream"
+      },
+      "docker": {
+        "build": "Failed to build video Docker image",
+        "start": "Failed to start video container",
+        "privileged": "Container requires privileged mode",
+        "device": "Video device not accessible in container"
+      },
+      "deployment": {
+        "status": "Failed to update video deployment status",
+        "rollback": "Video rollback failed - previous version not found",
+        "config_restore": "Failed to restore video configuration"
+      },
+      "test": {
+        "failed": "Video tests failed: {0}",
+        "capture": "Video capture test failed",
+        "streaming": "Video streaming test failed",
+        "format": "Format test failed: {0}",
+        "performance": "Performance test failed - {0} fps (required: {1})"
+      }
+    }
+  }
+}

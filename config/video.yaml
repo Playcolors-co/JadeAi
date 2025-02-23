@@ -1,0 +1,99 @@
+# Video Component Configuration
+version: "1.0.0"
+name: "jade-video"
+description: "Jade Video Management Component"
+
+# Version requirements
+required_versions:
+  system: "1.0.0"
+  ffmpeg: "4.2.0"
+  v4l2: "1.20.0"
+
+# Required packages
+packages:
+  - name: "ffmpeg"
+    required: true
+  - name: "v4l-utils"
+    required: true
+  - name: "gstreamer1.0-tools"
+    required: true
+  - name: "gstreamer1.0-plugins-base"
+    required: true
+  - name: "gstreamer1.0-plugins-good"
+    required: true
+  - name: "gstreamer1.0-plugins-bad"
+    required: true
+  - name: "gstreamer1.0-plugins-ugly"
+    required: true
+
+# Required directories
+directories:
+  - path: "/etc/jade/video"
+    mode: "755"
+    required: true
+  - path: "/var/log/jade/video"
+    mode: "755"
+    required: true
+  - path: "/opt/jade/video"
+    mode: "755"
+    required: true
+  - path: "/opt/jade/video/streams"
+    mode: "755"
+    required: true
+
+# Status file location
+status:
+  file: "/etc/jade/video/status"
+  mode: "644"
+
+# Deployment settings
+deployment:
+  backup:
+    enabled: true
+    location: "/opt/jade/backups/video"
+  rollback:
+    enabled: true
+    keep_versions: 3
+  post_deploy:
+    test_enabled: true
+    test_timeout: 300
+
+# Video configuration
+video:
+  devices:
+    path: "/dev/video*"
+    permissions: "666"
+  formats:
+    - name: "MJPEG"
+      required: false  # Made optional since video devices are optional
+    - name: "H264"
+      required: false
+  resolutions:
+    - "1920x1080"
+    - "1280x720"
+    - "640x480"
+  framerates:
+    - 30
+    - 25
+    - 15
+
+# Docker settings
+docker:
+  compose_file: "docker-compose.yml"
+  network: "jade-network"
+  components:
+    - name: "jade-video"
+      image: "jade-video:$JADE_VIDEO_VERSION"
+      privileged: false  # Changed since we don't require video devices
+      devices: []  # Empty since video devices are optional
+      volumes:
+        - "/opt/jade/video:/video"
+        - "/var/log/jade/video:/var/log/video"
+      ports:
+        - "8554:8554"  # RTSP
+        - "8555:8555"  # HTTP
+      environment:
+        - "DEVICE=/dev/video0"
+        - "RESOLUTION=1280x720"
+        - "FRAMERATE=30"
+        - "FORMAT=MJPEG"

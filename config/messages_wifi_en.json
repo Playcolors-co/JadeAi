@@ -1,0 +1,141 @@
+{
+  "wifi": {
+    "info": {
+      "setup_start": "Starting Jade WiFi setup",
+      "setup_complete": "WiFi setup completed successfully",
+      "prerequisites": {
+        "checking": "Checking WiFi prerequisites",
+        "passed": "All WiFi prerequisites passed"
+      },
+      "packages": {
+        "installing": "Installing WiFi packages",
+        "installing_specific": "Installing package: {0}",
+        "complete": "WiFi package installation completed"
+      },
+      "interfaces": {
+        "scanning": "Scanning for wireless interfaces",
+        "found": "Found wireless interface: {0}",
+        "configuring": "Configuring interface: {0}",
+        "mode": "Setting interface {0} to {1} mode",
+        "complete": "Interface configuration completed"
+      },
+      "netplan": {
+        "configuring": "Configuring Netplan",
+        "applying": "Applying Netplan configuration",
+        "complete": "Netplan configuration completed"
+      },
+      "hostapd": {
+        "configuring": "Configuring access point",
+        "starting": "Starting access point service",
+        "complete": "Access point configuration completed"
+      },
+      "dnsmasq": {
+        "configuring": "Configuring DHCP server",
+        "starting": "Starting DHCP service",
+        "complete": "DHCP configuration completed"
+      },
+      "wpa": {
+        "configuring": "Configuring WPA Supplicant",
+        "scanning": "Scanning for networks",
+        "connecting": "Connecting to network: {0}",
+        "complete": "WPA configuration completed"
+      },
+      "docker": {
+        "setup": "Setting up WiFi container",
+        "starting": "Starting WiFi container",
+        "complete": "WiFi container setup completed"
+      },
+      "testing": "Running WiFi tests",
+      "tests_passed": "All WiFi tests passed",
+      "deployment": {
+        "status": "Current WiFi deployment status: {0}",
+        "version": "WiFi component version: {0}",
+        "backup": "Creating WiFi configuration backup",
+        "rollback": "Rolling back WiFi configuration"
+      }
+    },
+    "warn": {
+      "interface": {
+        "not_found": "No {0} interface found - will retry after package installation",
+        "mode": "Interface {0} does not support {1} mode - falling back to {2}",
+        "channel": "Preferred channel {0} not available - using channel {1}"
+      },
+      "ap": {
+        "band": "5GHz band not supported - falling back to 2.4GHz",
+        "power": "Transmit power limited to {0}dBm",
+        "clients": "Maximum client limit reached"
+      },
+      "client": {
+        "signal": "Weak signal strength: {0}dBm",
+        "roaming": "Network roaming may be unstable",
+        "speed": "Connection speed limited to {0}Mbps"
+      },
+      "backup": {
+        "partial": "Some WiFi configuration files could not be backed up",
+        "skipped": "Backup skipped - no existing WiFi configuration found"
+      },
+      "test": {
+        "skipped": "WiFi tests skipped - test script not found",
+        "timeout": "WiFi test execution exceeded timeout of {0} seconds"
+      }
+    },
+    "error": {
+      "prerequisites": {
+        "system": "System component must be deployed first",
+        "version": "System version {0} is required (current: {1})"
+      },
+      "hardware": {
+        "not_found": "No wireless hardware detected",
+        "unsupported": "Wireless hardware does not support required features",
+        "blocked": "Wireless hardware is blocked (rfkill)",
+        "failure": "Failed to initialize wireless hardware"
+      },
+      "package": {
+        "install": "Failed to install WiFi package: {0}",
+        "configure": "Failed to configure package: {0}",
+        "dependency": "Missing required dependency: {0}"
+      },
+      "interface": {
+        "configure": "Failed to configure interface: {0}",
+        "mode": "Failed to set interface mode: {0}",
+        "address": "Failed to set interface address: {0}",
+        "up": "Failed to bring up interface: {0}"
+      },
+      "netplan": {
+        "generate": "Failed to generate Netplan configuration",
+        "apply": "Failed to apply Netplan configuration",
+        "validate": "Invalid Netplan configuration"
+      },
+      "ap": {
+        "start": "Failed to start access point",
+        "config": "Failed to configure access point",
+        "dhcp": "Failed to start DHCP server",
+        "bridge": "Failed to configure network bridge"
+      },
+      "client": {
+        "scan": "Failed to scan for networks",
+        "connect": "Failed to connect to network: {0}",
+        "authenticate": "Authentication failed for network: {0}",
+        "ip": "Failed to obtain IP address"
+      },
+      "docker": {
+        "build": "Failed to build WiFi Docker image",
+        "start": "Failed to start WiFi container",
+        "privileged": "Container requires privileged mode",
+        "network": "Host network mode required for WiFi"
+      },
+      "deployment": {
+        "status": "Failed to update WiFi deployment status",
+        "rollback": "WiFi rollback failed - previous version not found",
+        "config_restore": "Failed to restore WiFi configuration"
+      },
+      "test": {
+        "failed": "WiFi tests failed: {0}",
+        "ap": "Access point test failed",
+        "client": "Client connection test failed",
+        "throughput": "Throughput test failed: {0}Mbps (required: {1}Mbps)",
+        "latency": "Latency test failed: {0}ms (max: {1}ms)"
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+# Portainer Component Configuration
+version: "1.0.0"
+name: "jade-portainer"
+description: "Jade Portainer Container Management"
+
+# Version requirements
+required_versions:
+  system: "1.0.0"
+  docker: "20.10.0"
+
+# Required packages
+packages:
+  - name: "docker.io"
+    required: true
+  - name: "docker-compose"
+    required: true
+  - name: "nginx"
+    required: true
+
+# Required directories
+directories:
+  - path: "/etc/jade/portainer"
+    mode: "755"
+    required: true
+  - path: "/var/log/jade/portainer"
+    mode: "755"
+    required: true
+  - path: "/opt/jade/portainer"
+    mode: "755"
+    required: true
+  - path: "/opt/jade/portainer/data"
+    mode: "755"
+    required: true
+
+# Status file location
+status:
+  file: "/etc/jade/portainer/status"
+  mode: "644"
+
+# Deployment settings
+deployment:
+  backup:
+    enabled: true
+    location: "/opt/jade/backups/portainer"
+  rollback:
+    enabled: true
+    keep_versions: 3
+  post_deploy:
+    test_enabled: true
+    test_timeout: 300
+
+# Portainer configuration
+portainer:
+  admin_password: "${PORTAINER_ADMIN_PASSWORD}"  # Set via environment
+  endpoint_url: "unix:///var/run/docker.sock"
+  nginx:
+    config_file: "/etc/nginx/sites-available/portainer"
+    server_name: "portainer.jade.local"
+    port: 9000
+    ssl:
+      enabled: false
+  settings:
+    allow_bindmounts: true
+    allow_privileged: true
+    enable_host_management: true
+    enable_edge: false
+    snapshot_interval: 5
+    template_file: "/etc/jade/portainer/templates.json"
+  templates:
+    - title: "Jade System"
+      description: "Jade System Management Container"
+      image: "jade-system:${version}"
+      category: "Jade"
+    - title: "Jade Bluetooth"
+      description: "Jade Bluetooth Management Container"
+      image: "jade-bluetooth:${version}"
+      category: "Jade"
+    - title: "Jade Video"
+      description: "Jade Video Management Container"
+      image: "jade-video:${version}"
+      category: "Jade"
+    - title: "Jade HID"
+      description: "Jade HID Management Container"
+      image: "jade-hid:${version}"
+      category: "Jade"
+    - title: "Jade WiFi"
+      description: "Jade WiFi Management Container"
+      image: "jade-wifi:${version}"
+      category: "Jade"
+    - title: "Jade Web Admin"
+      description: "Jade Web Administration Interface"
+      image: "jade-web-admin:${version}"
+      category: "Jade"
+
+# Docker settings
+docker:
+  compose_file: "docker-compose.yml"
+  network: "jade-network"
+  components:
+    - name: "jade-portainer"
+      image: "portainer/portainer-ce:latest"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+        - "/opt/jade/portainer/data:/data"
+      ports:
+        - "8000:8000"  # Edge tunnel
+        - "9000:9000"  # Web interface
+      environment:
+        - "PORTAINER_ADMIN_PASSWORD=${PORTAINER_ADMIN_PASSWORD}"
+      restart: "always"
+      privileged: true

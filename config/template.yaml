@@ -1,0 +1,75 @@
+# Component version information
+version: "1.0.0"
+required_version: "1.0.0"
+component_name: "JadeTemplate"
+
+# Deployment settings
+deployment:
+  status_file: "/opt/control-panel/.template_setup"
+  backup_dir: "/opt/control-panel/backups/template"
+  log_dir: "/opt/control-panel/logs"
+
+# System requirements
+requirements:
+  memory: 1024  # MB
+  disk_space: 5120  # MB
+  kernel_modules: []  # Add required kernel modules if needed
+
+# Component configuration
+component:
+  # Service configuration
+  service:
+    name: "jade-template"
+    enabled: true
+    restart: "unless-stopped"
+
+  # Network configuration (if needed)
+  network:
+    name: "jade-network"
+    driver: "bridge"
+    subnet: "172.20.0.0/16"
+
+  # Required packages (if any)
+  packages:
+    - name: "package1"
+      version: "latest"
+    - name: "package2"
+      version: "latest"
+
+  # Repository configuration (if needed)
+  repository:
+    url: "https://example.com/repo"
+    key_url: "https://example.com/repo/key"
+    arch: "arm64"
+    release: "stable"
+    component: "main"
+
+  # Environment variables
+  environment:
+    - "NODE_ENV=production"
+    - "DEBUG=false"
+
+  # Volumes configuration
+  volumes:
+    - "/opt/control-panel/data:/data"
+    - "template_data:/app/data"
+
+  # Ports configuration
+  ports:
+    - "8080:8080"
+    - "9090:9090"
+
+# Docker compose configuration (if needed)
+docker:
+  image: "jade-template:latest"
+  build:
+    context: "."
+    dockerfile: "Dockerfile"
+  volumes:
+    - "/opt/control-panel/data:/data"
+  ports:
+    - "8080:8080"
+  environment:
+    - "NODE_ENV=production"
+  depends_on:
+    - "jade-network"

@@ -1,0 +1,398 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- WiFi Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">WiFi Networks</h5>
+                    <div>
+                        <button class="btn btn-secondary me-2" onclick="refreshWiFi()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button id="wifiScanButton" class="btn btn-primary" onclick="scanWiFi()">
+                            <i class="bi bi-search"></i> Scan Networks
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Connected Networks</h6>
+                        <ul id="connected-networks" class="device-list">
+                            <!-- Connected networks will be populated here -->
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h6 class="d-flex align-items-center">
+                            Available Networks
+                            <span id="wifi-scanning-indicator" class="badge bg-primary ms-2" style="display: none;">
+                                Scanning...
+                            </span>
+                        </h6>
+                        <ul id="available-networks" class="device-list">
+                            <!-- Available networks will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LAN Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">LAN Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Network Interfaces</h6>
+                        <div id="network-interfaces">
+                            <!-- Network interfaces will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Configure Interface</h6>
+                        <form id="interface-config-form" onsubmit="return false;">
+                            <div class="mb-3">
+                                <label class="form-label">Interface</label>
+                                <select id="interface-select" class="form-select">
+                                    <!-- Interfaces will be populated here -->
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Configuration Method</label>
+                                <select id="config-method" class="form-select" onchange="toggleStaticConfig()">
+                                    <option value="dhcp">DHCP</option>
+                                    <option value="static">Static IP</option>
+                                </select>
+                            </div>
+                            
+                            <div id="static-config" style="display: none;">
+                                <div class="mb-3">
+                                    <label class="form-label">IP Address</label>
+                                    <input type="text" id="static-ip" class="form-control" placeholder="192.168.1.100">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Netmask</label>
+                                    <input type="text" id="static-netmask" class="form-control" placeholder="255.255.255.0">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Gateway</label>
+                                    <input type="text" id="static-gateway" class="form-control" placeholder="192.168.1.1">
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="saveInterfaceConfig()">
+                                Save Configuration
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Network Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Network Status</h5>
+                </div>
+                <div class="card-body">
+                    <div id="network-status">
+                        <!-- Network status will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WiFi Connection Modal -->
+<div class="modal fade" id="wifiModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Connect to WiFi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="wifi-connect-form">
+                    <div class="mb-3">
+                        <label class="form-label">Network Name</label>
+                        <input type="text" id="wifi-ssid" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="wifi-password" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="connectWiFi()">Connect</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let wifiModal;
+let selectedSSID;
+
+function initNetwork() {
+    wifiModal = new bootstrap.Modal(document.getElementById('wifiModal'));
+    refreshWiFi();
+    refreshInterfaces();
+    updateNetworkStatus();
+    
+    // Refresh status periodically
+    setInterval(updateNetworkStatus, 10000);
+}
+
+function refreshWiFi() {
+    // Get connected networks
+    fetch('/api/network/wifi/status')
+        .then(response => response.json())
+        .then(networks => {
+            const networkList = document.getElementById('connected-networks');
+            networkList.innerHTML = '';
+            
+            networks.forEach(network => {
+                const li = document.createElement('li');
+                li.className = 'device-item';
+                li.innerHTML = `
+                    <div class="device-info">
+                        <div class="device-name">${network.ssid}</div>
+                        <div class="device-mac text-muted">Signal: ${network.strength}%</div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="disconnectWiFi('${network.ssid}')">
+                        <i class="bi bi-x-circle"></i> Disconnect
+                    </button>
+                `;
+                networkList.appendChild(li);
+            });
+            
+            if (networks.length === 0) {
+                networkList.innerHTML = '<div class="text-muted">Not connected to any network</div>';
+            }
+        })
+        .catch(error => showError('Failed to get WiFi status'));
+        
+    // Get available networks
+    fetch('/api/network/wifi/scan')
+        .then(response => response.json())
+        .then(networks => {
+            const networkList = document.getElementById('available-networks');
+            networkList.innerHTML = '';
+            
+            networks.forEach(network => {
+                const li = document.createElement('li');
+                li.className = 'device-item';
+                li.innerHTML = `
+                    <div class="device-info">
+                        <div class="device-name">${network.ssid}</div>
+                        <div class="device-mac">
+                            Signal: ${network.strength}% | Security: ${network.security}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="showWiFiModal('${network.ssid}')">
+                        <i class="bi bi-wifi"></i> Connect
+                    </button>
+                `;
+                networkList.appendChild(li);
+            });
+            
+            if (networks.length === 0) {
+                networkList.innerHTML = '<div class="text-muted">No networks available</div>';
+            }
+        })
+        .catch(error => showError('Failed to get available networks'));
+}
+
+function scanWiFi() {
+    const scanButton = document.getElementById('wifiScanButton');
+    const scanningIndicator = document.getElementById('wifi-scanning-indicator');
+    
+    scanButton.disabled = true;
+    scanningIndicator.style.display = 'inline-block';
+    
+    fetch('/api/network/wifi/scan', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            setTimeout(() => {
+                refreshWiFi();
+                scanButton.disabled = false;
+                scanningIndicator.style.display = 'none';
+            }, 5000);
+        })
+        .catch(error => {
+            showError('Failed to scan networks');
+            scanButton.disabled = false;
+            scanningIndicator.style.display = 'none';
+        });
+}
+
+function showWiFiModal(ssid) {
+    selectedSSID = ssid;
+    document.getElementById('wifi-ssid').value = ssid;
+    document.getElementById('wifi-password').value = '';
+    wifiModal.show();
+}
+
+function connectWiFi() {
+    const password = document.getElementById('wifi-password').value;
+    
+    fetch('/api/network/wifi/connect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ssid: selectedSSID,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccess('Connected to network');
+            wifiModal.hide();
+            setTimeout(refreshWiFi, 2000);
+        } else {
+            showError(data.error || 'Failed to connect');
+        }
+    })
+    .catch(error => showError('Failed to connect'));
+}
+
+function disconnectWiFi(ssid) {
+    if (confirm(`Disconnect from ${ssid}?`)) {
+        fetch('/api/network/wifi/disconnect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ssid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess('Disconnected from network');
+                refreshWiFi();
+            } else {
+                showError(data.error || 'Failed to disconnect');
+            }
+        })
+        .catch(error => showError('Failed to disconnect'));
+    }
+}
+
+function refreshInterfaces() {
+    fetch('/api/network/interfaces')
+        .then(response => response.json())
+        .then(interfaces => {
+            const interfaceDiv = document.getElementById('network-interfaces');
+            const interfaceSelect = document.getElementById('interface-select');
+            
+            interfaceDiv.innerHTML = '';
+            interfaceSelect.innerHTML = '';
+            
+            interfaces.forEach(iface => {
+                // Add to interface list
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <h6 class="card-title">${iface.name} (${iface.type})</h6>
+                        <div class="network-status mb-2">
+                            <div class="status-indicator ${iface.status === 'up' ? 'status-active' : 'status-inactive'}"></div>
+                            <span>Status: ${iface.status}</span>
+                        </div>
+                        ${iface.addresses.map(addr => `
+                            <div class="small text-muted">
+                                IP: ${addr.ip}<br>
+                                Netmask: ${addr.netmask}<br>
+                                ${addr.broadcast ? `Broadcast: ${addr.broadcast}` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                interfaceDiv.appendChild(card);
+                
+                // Add to interface select
+                const option = document.createElement('option');
+                option.value = iface.name;
+                option.textContent = `${iface.name} (${iface.type})`;
+                interfaceSelect.appendChild(option);
+            });
+        })
+        .catch(error => showError('Failed to get network interfaces'));
+}
+
+function toggleStaticConfig() {
+    const method = document.getElementById('config-method').value;
+    const staticConfig = document.getElementById('static-config');
+    staticConfig.style.display = method === 'static' ? 'block' : 'none';
+}
+
+function saveInterfaceConfig() {
+    const interface = document.getElementById('interface-select').value;
+    const method = document.getElementById('config-method').value;
+    const config = {
+        interface,
+        method,
+        settings: {}
+    };
+    
+    if (method === 'static') {
+        config.settings = {
+            address: document.getElementById('static-ip').value,
+            netmask: document.getElementById('static-netmask').value,
+            gateway: document.getElementById('static-gateway').value
+        };
+    }
+    
+    fetch('/api/network/lan/config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccess('Network configuration saved');
+            setTimeout(refreshInterfaces, 2000);
+        } else {
+            showError(data.error || 'Failed to save configuration');
+        }
+    })
+    .catch(error => showError('Failed to save configuration'));
+}
+
+function updateNetworkStatus() {
+    fetch('/api/network/status')
+        .then(response => response.json())
+        .then(status => {
+            const statusDiv = document.getElementById('network-status');
+            statusDiv.innerHTML = `
+                <div class="system-stats">
+                    <div class="stat-card">
+                        <div class="stat-title">Default Gateway</div>
+                        <div class="stat-value">${status.default_gateway || 'None'}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Active Interfaces</div>
+                        <div class="stat-value">${status.interfaces.filter(i => i.status === 'up').length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">WiFi Status</div>
+                        <div class="stat-value">${status.wifi.length > 0 ? 'Connected' : 'Disconnected'}</div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => console.error('Failed to update network status'));
+}
+</script>
