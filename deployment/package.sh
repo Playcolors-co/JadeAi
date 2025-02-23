@@ -55,6 +55,7 @@ mkdir -p build/${PACKAGE_NAME}/models/{hailo,llm,whisper}
 # Create Hailo models directory
 echo "Downloading Hailo model files..."
 mkdir -p build/${PACKAGE_NAME}/models/hailo
+
 # Download YOLOv8 HEF file
 curl -L -o build/${PACKAGE_NAME}/models/hailo/yolov8.hef \
     https://github.com/hailo-ai/hailo_model_zoo/raw/master/hefs/yolov8s_batch1.hef
@@ -126,10 +127,10 @@ cat > build/${PACKAGE_NAME}/README.md << EOL
    \`\`\`
 EOL
 
-# Create tarball
+# Create tarball without macOS attributes
 echo "Creating tarball..."
 cd build
-tar czf ${PACKAGE_NAME}.tar.gz ${PACKAGE_NAME}
+COPYFILE_DISABLE=1 tar --no-xattrs -czf ${PACKAGE_NAME}.tar.gz ${PACKAGE_NAME}
 cd ..
 
 echo "Package created: build/${PACKAGE_NAME}.tar.gz"
