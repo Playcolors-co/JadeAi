@@ -3,8 +3,9 @@
 # Exit on error
 set -e
 
-VERSION="1.0.0"
-PACKAGE_NAME="jadeai-${VERSION}"
+VERSION="0.1.0.0"
+ARCH="rpi5-hailo8"
+PACKAGE_NAME="jadeai-${VERSION}-${ARCH}"
 INSTALL_DIR="/opt/jadeai"
 
 echo "Creating deployment package for JadeAI ${VERSION}..."
