@@ -56,7 +56,7 @@ mkdir -p build/${PACKAGE_NAME}/models/{hailo,llm,whisper}
 echo "Downloading Hailo model files..."
 mkdir -p build/${PACKAGE_NAME}/models/hailo
 # Download YOLOv8 HEF file
-wget -O build/${PACKAGE_NAME}/models/hailo/yolov8.hef \
+curl -L -o build/${PACKAGE_NAME}/models/hailo/yolov8.hef \
     https://github.com/hailo-ai/hailo_model_zoo/raw/master/hefs/yolov8s_batch1.hef
 
 # Create README
