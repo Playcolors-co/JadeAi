@@ -1,0 +1,18 @@
+[Unit]
+Description=JadeAI - AI-Powered KVM Assistant
+After=network.target hailo.service
+Wants=hailo.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/jadeai
+Environment=PYTHONPATH=/opt/jadeai
+Environment=NODE_ENV=production
+Environment=HAILO_DEVICE_ID=0
+ExecStart=/opt/jadeai/venv/bin/python3 backend/app.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

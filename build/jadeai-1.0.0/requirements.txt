@@ -1,0 +1,28 @@
+# Web server
+flask==3.0.0
+flask-cors==4.0.0
+flask-socketio==5.3.6
+python-dotenv==1.0.0
+gunicorn==21.2.0
+
+# AI and ML
+hailo-ai>=4.0.0
+numpy>=1.24.0
+onnx>=1.15.0
+onnxruntime>=1.16.0
+torch>=2.1.0
+transformers>=4.36.0
+whisper-cpp>=1.5.0
+coqui-tts>=0.21.0
+
+# System monitoring
+psutil>=5.9.0
+gputil>=1.4.0
+
+# USB/HID control
+pyusb>=1.2.1
+hidapi>=0.14.0
+evdev>=1.6.1
+
+# Bluetooth support
+pybluez>=0.23
