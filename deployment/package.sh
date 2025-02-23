@@ -47,7 +47,15 @@ cp -r backend build/${PACKAGE_NAME}/
 cp -r frontend/dist build/${PACKAGE_NAME}/frontend/
 cp -r deployment build/${PACKAGE_NAME}/
 cp requirements.txt build/${PACKAGE_NAME}/
+cp requirements_frontend.txt build/${PACKAGE_NAME}/
+cp requirements_backend.txt build/${PACKAGE_NAME}/
+cp requirements_barebone.txt build/${PACKAGE_NAME}/
 cp install.sh build/${PACKAGE_NAME}/
+cp install_docker.sh build/${PACKAGE_NAME}/
+cp docker-compose.yml build/${PACKAGE_NAME}/
+cp Dockerfile.portainer build/${PACKAGE_NAME}/
+cp Dockerfile.backend build/${PACKAGE_NAME}/
+cp Dockerfile.frontend build/${PACKAGE_NAME}/
 
 # Create models directory structure
 mkdir -p build/${PACKAGE_NAME}/models/{hailo,llm,whisper}

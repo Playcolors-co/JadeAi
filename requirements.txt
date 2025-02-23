@@ -6,7 +6,6 @@ python-dotenv==1.0.0
 gunicorn==21.2.0
 
 # AI and ML
-hailo-ai>=4.0.0
 numpy>=1.24.0
 onnx>=1.15.0
 onnxruntime>=1.16.0
@@ -25,4 +24,4 @@ hidapi>=0.14.0
 evdev>=1.6.1
 
 # Bluetooth support
-pybluez>=0.23
+# pybluez>=0.23

@@ -1,0 +1,8 @@
+# AI and ML
+numpy>=1.24.0
+onnx>=1.15.0
+onnxruntime>=1.16.0
+torch>=2.1.0
+transformers>=4.36.0
+whisper-cpp>=1.5.0
+coqui-tts>=0.21.0

@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: jadeai_frontend
+    volumes:
+      - frontend_dist:/app/dist
+    command: ["npm", "run", "build"]
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: jadeai_backend
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=production
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    container_name: jadeai_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./deployment/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - frontend_dist:/opt/jadeai/frontend/dist:ro
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+
+  portainer:
+    build:
+      context: .
+      dockerfile: Dockerfile.portainer
+    container_name: portainer
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+
+volumes:
+  frontend_dist:
+  portainer_data:

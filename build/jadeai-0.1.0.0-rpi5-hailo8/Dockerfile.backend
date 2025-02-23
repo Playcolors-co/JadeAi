@@ -1,0 +1,42 @@
+# Dockerfile.backend
+FROM python:3.10-slim
+
+# Installa bash e le dipendenze di sistema necessarie:
+# - gcc, libffi-dev: per compilare eventuali estensioni in C
+# - python3-bluez: fornisce il supporto Bluetooth a livello di sistema (sostituisce pybluez)
+# - python3-evdev: fornisce il supporto per evdev tramite pacchetto di sistema
+# - build-essential: strumenti di compilazione
+# - curl: per scaricare rustup
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    gcc \
+    libffi-dev \
+    python3-bluez \
+    python3-evdev \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installa Rust tramite rustup per ottenere una versione aggiornata (stable, >=1.65)
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
+# Aggiunge rust (cargo, rustc, ecc.) al PATH
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /app
+
+# Aggiorna pip, setuptools e wheel
+RUN pip install --upgrade pip setuptools wheel
+
+# Copia il file dei requisiti
+COPY requirements_backend.txt .
+# Installa i requirements
+RUN pip install -r requirements_backend.txt
+
+# Copia l'intero codice applicativo
+COPY . .
+
+# Espone la porta dell'API (modifica se necessario)
+EXPOSE 5001
+
+# Avvia l'applicazione (modifica "jadeai.py" se il file principale è diverso)
+CMD ["python", "jadeai.py"]

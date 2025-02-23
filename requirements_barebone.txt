@@ -1,0 +1,11 @@
+# System monitoring
+psutil>=5.9.0
+gputil>=1.4.0
+
+# USB/HID control
+pyusb>=1.2.1
+hidapi>=0.14.0
+evdev>=1.6.1
+
+# Bluetooth support
+# pybluez>=0.23

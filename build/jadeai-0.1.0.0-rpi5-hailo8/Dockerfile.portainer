@@ -1,0 +1,9 @@
+# Dockerfile.portainer
+FROM portainer/portainer-ce:latest
+
+# Espone le porte per l'interfaccia web e il proxy
+EXPOSE 9000 8000
+
+# L'immagine ufficiale di Portainer include già l'ENTRYPOINT e il CMD appropriati,
+# ma se vuoi esplicitare il comando di avvio, puoi usare il seguente comando:
+CMD ["-H", "unix:///var/run/docker.sock"]

@@ -1,0 +1,20 @@
+# Dockerfile.frontend
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Se i file package.json e package-lock.json sono nella cartella "frontend" nella root,
+# assicurati che il contesto di build li includa. Se necessario, copia la cartella completa.
+COPY frontend/package*.json ./
+# Copia il file dei requisiti
+COPY requirements_frontend.txt .
+# Installa i requirements
+RUN pip install -r requirements_frontend.txt
+
+RUN npm install
+
+COPY frontend .
+
+RUN npm run build
+
+CMD ["echo", "Frontend build completed"]
