@@ -55,46 +55,56 @@ log_success "System packages updated."
 log_info "Installing system dependencies..."
 sudo apt install -y \
     docker \
-    docker-compose 
+    docker-compose \
+    python3-venv
 log_success "System dependencies installed."
+
+# 5. Set up Python Virtual Environment
+log_info "Setting up Python virtual environment..."
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+    log_success "Virtual environment created."
+else
+    log_info "Virtual environment already exists."
+fi
+# Activate the virtual environment
+source venv/bin/activate
 
 # 6. Install Python dependencies
 log_info "Installing Python dependencies..."
 pip install -r requirements_barebone.txt
 log_success "Python dependencies installed."
 
-# Controlla se Docker è installato
+# Check if Docker is installed
 if ! command -v docker >/dev/null 2>&1; then
-  log_error "Docker non è installato. Installa Docker e riprova."
+  log_error "Docker is not installed. Please install Docker and try again."
   exit 1
 fi
 
-# Controlla se Docker Compose è installato
+# Check if Docker Compose is installed
 if ! command -v docker-compose >/dev/null 2>&1; then
-  log_error "Docker Compose non è installato. Installa Docker Compose e riprova."
+  log_error "Docker Compose is not installed. Please install Docker Compose and try again."
   exit 1
 fi
 
-log_info "Docker e Docker Compose sono installati."
+log_info "Docker and Docker Compose are installed."
 
-# Costruisci e avvia i container
-log_info "Costruzione e avvio dei container con Docker Compose..."
+# 7. Build and run Docker containers
+log_info "Building and starting containers with Docker Compose..."
 docker-compose up --build -d
+log_success "All containers have been started in the background."
 
-log_success "Tutti i container sono stati avviati in background."
+# Final message before installing Hailo Python API
+echo -e "${GREEN}Installation complete!${NC}"
+echo "You can check the status of the containers by running: docker-compose ps"
+echo "To stop the containers, run: docker-compose down"
 
-# Messaggio finale
-echo -e "${GREEN}Installazione completata!${NC}"
-echo "Puoi controllare lo stato dei container eseguendo: docker-compose ps"
-echo "Per fermare i container, esegui: docker-compose down"
-
-# 7. Install Hailo Python API
+# 8. Install Hailo Python API
 log_info "Installing Hailo Python API..."
 pip install hailo-ai
 log_success "Hailo Python API installed."
 
-
-# 11. Set up Bluetooth HID
+# 9. Set up Bluetooth HID
 log_info "Setting up Bluetooth HID device..."
 chmod +x deployment/bluetooth_hid_setup.sh
 sudo ./deployment/bluetooth_hid_setup.sh
@@ -104,5 +114,3 @@ log_success "Bluetooth HID device configured."
 echo -e "${GREEN}Installation complete!${NC}"
 echo "JadeAI is now running at http://localhost"
 echo "Bluetooth HID device is available as 'JadeAI HID'"
-
-
