@@ -1,4 +1,4 @@
-# JadeAI HID System
+# JadeAI
 
 A Bluetooth-based HID solution split into two containers:
 
