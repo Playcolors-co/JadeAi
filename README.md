@@ -8,19 +8,35 @@ A Bluetooth-based HID solution split into two containers:
 ## 🧱 Project Structure
 
 JadeAI_Vx.x/
+
 ├── hid-bt/
+
 │ ├── Dockerfile
+
 │ ├── main.c
+
 │ ├── bt_manager.py
+
 │ ├── api_server.py
+
 │ ├── hid_report_map.h
+
 │ ├── openapi.yaml
+
 │ ├── requirements.txt
+
 │ └── Makefile
+
 ├── hid-agent/
+
 │ ├── Dockerfile
+
 │ ├── agent.py
+
 │ ├── supervisor_client.py
+
 │ └── requirements.txt
+
 ├── docker-compose.yaml
+
 └── README.md
