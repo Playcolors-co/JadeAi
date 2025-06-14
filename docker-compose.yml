@@ -1,0 +1,25 @@
+services:
+  jadeai-hid-bt:
+    build:
+      context: ./hid-bt
+      dockerfile: Dockerfile
+      network: host
+    container_name: jadeai-hid-bt
+    network_mode: host
+    privileged: true
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /dev:/dev
+    restart: unless-stopped
+    command: ["python3", "api_server.py"]
+
+  jadeai-hid-agent:
+    build: 
+      context: ./hid-agent
+      dockerfile: Dockerfile
+      network: host
+    container_name: jadeai-hid-agent
+    depends_on:
+      - jadeai-hid-bt
+    restart: unless-stopped
+
