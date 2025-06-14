@@ -8,7 +8,6 @@ A Bluetooth-based HID solution split into two containers:
 ## 🧱 Project Structure
 
 JadeAI_Vx.x/
-
 ├── hid-bt/
 
 │ ├── Dockerfile
