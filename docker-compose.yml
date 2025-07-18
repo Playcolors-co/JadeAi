@@ -1,10 +1,10 @@
 services:
-  jadeai-hid-bt:
+  jadeai-hid-pheriperal:
     build:
-      context: ./hid-bt
+      context: ./hid-pheriperal
       dockerfile: Dockerfile
       network: host
-    container_name: jadeai-hid-bt
+    container_name: jadeai-hid-pheriperal
     network_mode: host
     privileged: true
     volumes:
@@ -20,6 +20,6 @@ services:
       network: host
     container_name: jadeai-hid-agent
     depends_on:
-      - jadeai-hid-bt
+      - jadeai-hid-pheriperal
     restart: unless-stopped
 
