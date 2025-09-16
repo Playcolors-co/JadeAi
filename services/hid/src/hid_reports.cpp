@@ -1,5 +1,8 @@
 #include "hid_reports.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <stdexcept>
 #include <unordered_map>
 
 namespace {
@@ -89,4 +92,21 @@ uint8_t mouseButtonMask(MouseButton button)
         return 0x04;
     }
     return 0x00;
+}
+
+MouseButton mouseButtonFromString(const std::string& name)
+{
+    std::string lower = name;
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+    if (lower == "left") {
+        return MouseButton::Left;
+    }
+    if (lower == "right") {
+        return MouseButton::Right;
+    }
+    if (lower == "middle" || lower == "mid") {
+        return MouseButton::Middle;
+    }
+    throw std::invalid_argument("Unsupported mouse button: " + name);
 }

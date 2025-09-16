@@ -133,7 +133,7 @@ JadeAI/
 
 ### 5. Executor Agent (HID)
 - Executes physical actions on the external computer (mouse and keyboard).
-- Exposed via REST API controlling a Bluetooth HID GATT server or USB gadget HID.
+- Exposed via a C++ microservice providing a REST API that drives a Bluetooth HID GATT server (Jetson-ready) or USB gadget HID.
 
 ### 6. Memory & Tools
 - Short- and long-term context memory (FAISS/Chroma DB).

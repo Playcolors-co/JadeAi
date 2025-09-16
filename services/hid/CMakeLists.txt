@@ -16,6 +16,7 @@ add_executable(jadeai-hid
     src/main.cpp
     src/hid_config.cpp
     src/bluetooth_hid_server.cpp
+    src/hid_reports.cpp
     src/http_api.cpp
 )
 
@@ -31,3 +32,5 @@ target_link_libraries(jadeai-hid
         PkgConfig::SDBUSCPP
         Threads::Threads
 )
+
+install(TARGETS jadeai-hid DESTINATION bin)

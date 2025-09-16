@@ -1,10 +1,30 @@
-FROM python:3.11-slim
+FROM ubuntu:22.04
 
-WORKDIR /app
+ENV DEBIAN_FRONTEND=noninteractive
 
-COPY requirements.txt ./
-RUN if [ -s requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        pkg-config \
+        libsdbus-c++-dev \
+        libyaml-cpp-dev \
+        libbluetooth-dev \
+        bluez \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY hid_server.py ./hid_server.py
+WORKDIR /opt/jadeai/hid
 
-CMD ["python", "-m", "http.server", "8003"]
+COPY CMakeLists.txt ./
+COPY include ./include
+COPY src ./src
+
+RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target jadeai-hid -- -j$(nproc) && \
+    cmake --install build --prefix /opt/jadeai
+
+RUN rm -rf build
+
+WORKDIR /opt/jadeai
+
+CMD ["/opt/jadeai/bin/jadeai-hid"]

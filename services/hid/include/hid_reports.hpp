@@ -23,3 +23,4 @@ const std::array<uint8_t, 9>& makeKeyboardReleaseReport();
 
 std::array<uint8_t, 5> makeMouseReport(uint8_t buttons, int8_t dx, int8_t dy, int8_t wheel = 0);
 uint8_t mouseButtonMask(MouseButton button);
+MouseButton mouseButtonFromString(const std::string& name);

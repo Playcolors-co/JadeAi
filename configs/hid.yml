@@ -1,6 +1,17 @@
 mode: ${JADEAI_HID_MODE:bluetooth}
 device_name: ${JADEAI_HID_DEVICE_NAME:JadeAI HID}
 ble_adapter: ${JADEAI_HID_BLE_ADAPTER:hci0}
-rate_limit:
-  keypress_per_second: 12
-  pointer_updates_per_second: 60
+http:
+  bind: ${JADEAI_HID_HTTP_BIND:0.0.0.0}
+  port: ${JADEAI_HID_HTTP_PORT:8003}
+hid:
+  manufacturer: ${JADEAI_HID_MANUFACTURER:JadeAI}
+  appearance: 961
+  keyboard:
+    enabled: ${JADEAI_HID_KEYBOARD_ENABLED:true}
+  mouse:
+    enabled: ${JADEAI_HID_MOUSE_ENABLED:true}
+safety:
+  keypress_delay_ms: 20
+  mouse_move_delay_ms: 8
+  mouse_step_limit: 40
