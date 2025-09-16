@@ -64,7 +64,7 @@ jadeai/
 ```
 JadeAI/
 ├─ README.md                      # Project overview (this file)
-├─ LICENSE                        # e.g. Apache-2.0 (adjust as needed)
+├─ LICENSE                        # Apache-2.0 
 ├─ .gitignore
 ├─ .env.example                   # Environment variables template
 ├─ Makefile                       # Common build/run/diagnostic targets
