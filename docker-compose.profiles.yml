@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  gateway:
+    profiles: [core]
+
+  perception:
+    profiles: [core, perception]
+
+  llm:
+    profiles: [core, llm]
+
+  planner:
+    profiles: [core]
+
+  hid:
+    profiles: [core, hid]
+
+  memory:
+    profiles: [core]
+
+  bus:
+    profiles: [bus]

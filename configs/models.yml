@@ -1,0 +1,12 @@
+llm:
+  provider: llama_cpp
+  model_path: ${JADEAI_LLM_MODEL_PATH}
+  context_window: ${JADEAI_LLM_CONTEXT:4096}
+  temperature: 0.3
+ocr:
+  provider: paddleocr
+  model_path: /models/ocr
+  lang: ["en"]
+vision:
+  detector: yolo11n
+  engine_path: /models/detector/yolo11n.trt

@@ -1,0 +1,9 @@
+logging:
+  level: INFO
+  path: /var/log/jadeai
+metrics:
+  enabled: true
+  exporter: prometheus
+tracing:
+  enabled: false
+  exporter: otlp
