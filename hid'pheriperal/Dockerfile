@@ -13,6 +13,6 @@ COPY . /app
 RUN pip3 install -r requirements.txt
 
 # Compile C GATT HID server
-RUN gcc -o hid'pheriperal main.c -lbluetooth -pthread
+RUN make
 
 CMD ["python3", "api_server.py"]

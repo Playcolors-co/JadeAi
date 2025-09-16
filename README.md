@@ -12,19 +12,16 @@ JadeAI_Vx.x/
 ├── hid'pheriperal/
 
 │ ├── Dockerfile
-
-│ ├── main.c
-
+│ ├── main.cpp
+│ ├── bluetooth_manager.cpp/.h
+│ ├── hid_server.cpp/.h
+│ ├── command_server.cpp/.h
+│ ├── key_mapper.cpp/.h
 │ ├── bt_manager.py
-
 │ ├── api_server.py
-
 │ ├── hid_report_map.h
-
 │ ├── openapi.yaml
-
 │ ├── requirements.txt
-
 │ └── Makefile
 
 ├── hid-agent/
