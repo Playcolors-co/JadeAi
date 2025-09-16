@@ -2,29 +2,26 @@
 
 A Bluetooth-based HID solution split into two containers:
 
-- `jadeai-hid'pheriperal`: exposes the host's Bluetooth interface as a GATT HID device (keyboard + mouse) with a REST API.
+- `jadeai-hid-pheriperal`: exposes the host's Bluetooth interface as a GATT HID device (keyboard + mouse) with a REST API.
 - `jadeai-hid-agent`: AI agent that sends HID commands to the HID server based on high-level instructions.
   
 ## 🧱 Project Structure
 
 JadeAI_Vx.x/
 
-├── hid'pheriperal/
+├── hid-pheriperal/
 
 │ ├── Dockerfile
-
-│ ├── main.c
-
+│ ├── main.cpp
+│ ├── bluetooth_manager.cpp/.h
+│ ├── hid_server.cpp/.h
+│ ├── command_server.cpp/.h
+│ ├── key_mapper.cpp/.h
 │ ├── bt_manager.py
-
 │ ├── api_server.py
-
 │ ├── hid_report_map.h
-
 │ ├── openapi.yaml
-
 │ ├── requirements.txt
-
 │ └── Makefile
 
 ├── hid-agent/

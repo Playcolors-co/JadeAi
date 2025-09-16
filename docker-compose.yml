@@ -1,10 +1,10 @@
 services:
-  jadeai-hid'pheriperal:
+  jadeai-hid-pheriperal:
     build:
-      context: ./hid'pheriperal
+      context: ./hid-pheriperal
       dockerfile: Dockerfile
       network: host
-    container_name: jadeai-hid'pheriperal
+    container_name: jadeai-hid-pheriperal
     network_mode: host
     privileged: true
     volumes:
@@ -14,12 +14,12 @@ services:
     command: ["python3", "api_server.py"]
 
   jadeai-hid-agent:
-    build: 
+    build:
       context: ./hid-agent
       dockerfile: Dockerfile
       network: host
     container_name: jadeai-hid-agent
     depends_on:
-      - jadeai-hid'pheriperal
+      - jadeai-hid-pheriperal
     restart: unless-stopped
 
