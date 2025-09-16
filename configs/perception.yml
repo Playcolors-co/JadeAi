@@ -1,0 +1,10 @@
+fps: ${JADEAI_FPS:1}
+resolution: ${JADEAI_RESOLUTION:1280x720}
+roi_padding: 4
+cursor_tracking: true
+ocr:
+  languages: [en]
+  min_confidence: 0.6
+detector:
+  engine: yolo11n
+  max_detections: 128

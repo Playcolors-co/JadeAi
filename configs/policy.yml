@@ -1,0 +1,10 @@
+confirm:
+  destructive: true
+  external_send: true
+allow_apps:
+  - settings
+  - browser
+  - terminal
+block_patterns:
+  - /delete|erase|format/i
+  - /rm -rf/ 

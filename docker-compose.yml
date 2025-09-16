@@ -1,25 +1,60 @@
+version: "3.9"
+
 services:
-  jadeai-hid-pheriperal:
-    build:
-      context: ./hid-pheriperal
-      dockerfile: Dockerfile
-      network: host
-    container_name: jadeai-hid-pheriperal
+  gateway:
+    build: ./services/gateway
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs:ro
+    depends_on:
+      - perception
+      - planner
+      - hid
+      - memory
+      - llm
+
+  perception:
+    build: ./services/perception
+    env_file: .env
+    devices:
+      - "/dev/video0:/dev/video0"
+    volumes:
+      - ./configs/perception.yml:/app/config/perception.yml:ro
+      - ./data:/data
+
+  llm:
+    build: ./services/llm
+    env_file: .env
+    volumes:
+      - ./configs/models.yml:/app/config/models.yml:ro
+      - ${JADEAI_LLM_MODEL_PATH:-./models}:${JADEAI_LLM_MODEL_PATH:-/models}
+
+  planner:
+    build: ./services/planner
+    env_file: .env
+    volumes:
+      - ./configs/policy.yml:/app/config/policy.yml:ro
+      - ./configs/planner.yml:/app/config/planner.yml:ro
+
+  hid:
+    build: ./services/hid
+    env_file: .env
     network_mode: host
     privileged: true
     volumes:
-      - /var/run/dbus:/var/run/dbus
-      - /dev:/dev
-    restart: unless-stopped
-    command: ["python3", "api_server.py"]
+      - ./configs/hid.yml:/app/config/hid.yml:ro
 
-  jadeai-hid-agent:
-    build: 
-      context: ./hid-agent
-      dockerfile: Dockerfile
-      network: host
-    container_name: jadeai-hid-agent
-    depends_on:
-      - jadeai-hid-pheriperal
-    restart: unless-stopped
+  memory:
+    build: ./services/memory
+    env_file: .env
+    volumes:
+      - ./configs/telemetry.yml:/app/config/telemetry.yml:ro
+      - ./data/cache:/data/cache
 
+  bus:
+    build: ./services/bus
+    env_file: .env
+    ports:
+      - "4222:4222"

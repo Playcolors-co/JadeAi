@@ -1,0 +1,6 @@
+max_steps: 16
+max_retries: 3
+confirm_high_risk: true
+safety_checks:
+  - policy
+  - cursor_visibility
